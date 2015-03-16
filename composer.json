@@ -13,6 +13,7 @@
         }
     },
     "require": {
-        "aws/aws-sdk-php": "*"
+        "aws/aws-sdk-php": "*",
+        "satooshi/php-coveralls": "*"
     }
 }
