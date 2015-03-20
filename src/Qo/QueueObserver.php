@@ -8,7 +8,7 @@
  **/
 namespace Qo;
 
-use Qo\Error\Error;
+use Qo\Error\ErrorHandler;
 
 class QueueObserver
 {
@@ -37,6 +37,6 @@ class QueueObserver
     public static function init ()
     {
         // エラーハンドラを初期化する
-        Error::init();
+        ErrorHandler::init();
     }
 }

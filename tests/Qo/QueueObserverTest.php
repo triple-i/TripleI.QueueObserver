@@ -4,10 +4,10 @@ use Qo\QueueObserver;
 
 class QueueObserverTest extends \PHPUnit_Framework_TestCase
 {
-    
+
     /**
      * @test
-     * @expectedException          \Qo\Exception\QoException
+     * @expectedException          \Qo\Error\Exception\QoException
      * @expectedExceptionMessage   Undefined variable: v
      * @group qo-init-error-handler
      * @group qo

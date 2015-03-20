@@ -4,9 +4,9 @@
  * QueueObserver独自のエラーをthrowする際に使用する
  *
  * @package    Qo
- * @subpackage Exception
+ * @subpackage Error
  */
-namespace Qo\Exception;
+namespace Qo\Error\Exception;
 
 class QoException extends \Exception
 {

@@ -5,9 +5,9 @@
  * エラー内容をメール送信して管理者に通知する
  *
  * @package    Qo
- * @subpackage Exception
+ * @subpackage Error
  **/
-namespace Qo\Exception;
+namespace Qo\Error\Exception;
 
 class ErrorException extends \ErrorException
 {

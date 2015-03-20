@@ -8,12 +8,12 @@
  **/
 namespace Qo\Error;
 
-use Qo\Exception\ErrorException;
-use Qo\Exception\QoException;
+use Qo\Error\Exception\ErrorException;
+use Qo\Error\Exception\QoException;
 
-class Error
+class ErrorHandler
 {
-    
+
     /**
      * @return void
      **/
