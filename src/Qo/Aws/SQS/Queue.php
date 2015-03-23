@@ -14,11 +14,11 @@ class Queue
 {
 
     /**
-     * 使用するキュー名称
+     * 使用出来るキュー名称
      *
      * @var array
      */
-    const NAMES = [
+    public static $names = [
         'GEMINI_QUEUE',
         'GEMINI_PUBLISH_VER2'
     ];
@@ -56,7 +56,7 @@ class Queue
      */
     public static function getUrl ($q_name)
     {
-        if (! in_array($q_name, self::NAMES)) {
+        if (! in_array($q_name, self::$names)) {
             throw new QoException('存在しないキュー名称です');
         }
 

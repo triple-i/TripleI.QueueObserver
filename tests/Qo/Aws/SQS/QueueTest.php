@@ -23,7 +23,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      * @group queue-get-url
-     * @group queuru
+     * @group queue
      */
     public function 指定キューのURLを取得する ()
     {
