@@ -1,48 +1,37 @@
-PHP.Skeleton
+TripleI.QueueObserver ![](https://travis-ci.org/triple-i/TripleI.QueueObserver.svg?branch=develop)
 =======
-A standard PHP project skeleton
+シンプルなキュー監視サービス
 ---------------------------------------------
-This project was created in order to provide project skeleton to start new PHP project.
-Various config files are ready for continuous integration.
+TripleI.QueueObserver は AmazonSQS を監視するシンプルな監視サービスを提供します。  
+少しの設定で監視サービスを立ち上げることが出来ます。
 
- * phpunit.xml for [phpunit](http://phpunit.de/manual/current/en/index.html)
- * build.xml for [Apache Ant](http://ant.apache.org/) / [Jenkins](http://jenkins-ci.org/)
- * .travis.yml for [Travis CI](https://travis-ci.org/)
 
-Requirements
+推奨環境
 ------------
- * PHP 5.3+
+ * PHP 5.4+
 
-Getting started
+アプリケーションの準備
 ---------------
 
-### Create project
+### ライブラリのインストール
 ```
- $ composer create-project php/skeleton {Vendor.Package}
- $ cd {Vendor.Package}
- $ composer dump-autoload
- $ phpunit
+ $ composer install
+```
+
+### AWS の設定
+```
+export AWS_ACCESS_KEY_ID="your_aws_access_key_id"
+export AWS_SECRET_ACCESS_KEY="your_secret_access_key"
+export AWS_DEFAULT_REGION="your_default_region"
 ```
 
 
-Using ant
+使い方
 ---------
+使い方は簡単です。  
+bin/observe に監視したキュー名称を渡してあげるだけで監視が始まります。
 
-### Prepare
 
-Install QA(Quality Assurance) tools
-```bash
- $ ant require
 ```
-Export composer bin path 
-```bash
-export PATH="$HOME/.composer/vendor/bin:$PATH"
-```
-
-## ant
-```bash
- $ ant
- 
- $ ant test
- $ ant report
+$ bin/observe YOUR_SQS_NAME
 ```
