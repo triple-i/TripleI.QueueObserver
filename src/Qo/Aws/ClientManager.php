@@ -5,7 +5,7 @@
  *
  * @package Qo
  * @subpackage Aws
- */
+ **/
 namespace Qo\Aws;
 
 use Aws\Sqs\SqsClient;
@@ -17,7 +17,7 @@ class ClientManager
 
     /**
      * @return void
-     */
+     **/
     private function __construct ()
     {
     }
@@ -57,7 +57,7 @@ class ClientManager
     /**
      * @param  array $config
      * @return SqsClient
-     */
+     **/
     public static function getSqsClient ($config = [])
     {
         $config = self::getConfig($config);

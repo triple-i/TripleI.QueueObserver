@@ -1,7 +1,7 @@
 <?php
 
 
-use Qo\Aws\SQS\Queue;
+use Qo\Aws\Sqs\Queue;
 
 class QueueTest extends PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
      * @expectedExceptionMessage    存在しないキュー名称です
      * @group queue-wrong-queue-name
      * @group queue
-     */
+     **/
     public function 無効なキュー名称を指定した場合 ()
     {
         $name = 'foo';
@@ -24,7 +24,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
      * @test
      * @group queue-get-url
      * @group queue
-     */
+     **/
     public function 指定キューのURLを取得する ()
     {
         $url = Queue::getUrl('GEMINI_PUBLISH_VER2');
