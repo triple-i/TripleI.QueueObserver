@@ -74,6 +74,18 @@ abstract class MockTestCase extends \PHPUnit_Framework_TestCase
 
 
     /**
+     * @return Ec2Client_Mock
+     **/
+    public function getEc2Mock ()
+    {
+        $arguments = $this->_getConstructArguments();
+        $methods   = array_merge($this->methods, []);
+
+        return $this->getMock('Aws\Ec2\Ec2Client', $methods, $arguments);
+    }
+
+
+    /**
      * @return SqsClient_Mock
      **/
     public function getSqsMock ()

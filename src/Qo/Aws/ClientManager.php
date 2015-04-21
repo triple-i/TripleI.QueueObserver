@@ -8,6 +8,7 @@
  **/
 namespace Qo\Aws;
 
+use Aws\Ec2\Ec2Client;
 use Aws\Sqs\SqsClient;
 
 use Qo\Error\Exception\QoException;
@@ -51,6 +52,17 @@ class ClientManager
             'secret' => $secret_key,
             'region' => $region
         ], $config);
+    }
+
+
+    /**
+     * @param  array $config
+     * @return Ec2Client
+     **/
+    public static function getEc2Client ($config = [])
+    {
+        $config = self::getConfig($config);
+        return Ec2Client::factory($config);
     }
 
 
