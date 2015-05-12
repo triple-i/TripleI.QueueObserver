@@ -88,15 +88,35 @@ abstract class MockTestCase extends \PHPUnit_Framework_TestCase
 
 
     /**
+     * @return InstanceBuilder
+     **/
+    public function getInstanceBuilderMock ()
+    {
+        return $this->getMock('Qo\Aws\Ec2\InstanceBuilder', [
+            'execute', 'setEc2Client', 'setRunner'
+        ]);
+    }
+
+
+    /**
+     * @return Receiver_Mock
+     **/
+    public function getReceiverMock ()
+    {
+        return $this->getMock('Qo\Aws\Sqs\Receiver', [
+            'execute', 'setSqsClient', 'setQueueUrl'
+        ]);
+    }
+
+
+    /**
      * @return Runner_Mock
      **/
     public function getRunnerMock ()
     {
-        $methods = [
+        return $this->getMock('Qo\Command\Runner', [
             'execute'
-        ];
-
-        return $this->getMock('Qo\Command\Runner', $methods);
+        ]);
     }
 
 

@@ -23,8 +23,8 @@ after_script:
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
 notifications:
-    email:
-        - suguru@iii-planning.com
-    on_success: never
-    on_failure: always
+  email:
+    - info@gemini-project.net
+  on_success: never
+  on_failure: always
 

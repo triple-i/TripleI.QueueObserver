@@ -10,6 +10,6 @@ $loader->set('Qo', LIB);
 
 
 if (TEST === false) {
-    Qo\QueueObserver::init();
+    Qo\Error\ErrorHandler::init();
 }
 

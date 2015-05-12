@@ -3,3 +3,17 @@
 
 require_once __DIR__.'/../src/Bootstrap.php';
 
+use Qo\Aws\Sqs\Queue;
+use Qo\Aws\Sqs\Receiver;
+
+
+$queue_name = $argv[1];
+$queue_url  = Queue::getUrl($queue_name);
+
+$receiver = new Receiver();
+$receiver->setQueueUrl($queue_url);
+
+$observer = new Qo\QueueObserver();
+$observer->setReceiver($receiver);
+$observer->execute();
+
