@@ -24,19 +24,6 @@ class RunnerTest extends MockTestCase
 
     /**
      * @test
-     * @expectedException          Exception
-     * @group runner-invalid-command
-     * @group runner
-     **/
-    public function 空コマンドを実行した場合 ()
-    {
-        $command = '';
-        $this->runner->execute($command);
-    }
-
-
-    /**
-     * @test
      * @group runner-execute
      * @group runner
      **/

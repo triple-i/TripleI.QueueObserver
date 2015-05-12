@@ -3,8 +3,11 @@
 
 require_once __DIR__.'/../src/Bootstrap.php';
 
+use Qo\Aws\ClientManager;
+use Qo\Aws\Ec2\InstanceBuilder;
 use Qo\Aws\Sqs\Queue;
 use Qo\Aws\Sqs\Receiver;
+use Qo\Command\Runner;
 
 
 $queue_name = $argv[1];
@@ -12,8 +15,14 @@ $queue_url  = Queue::getUrl($queue_name);
 
 $receiver = new Receiver();
 $receiver->setQueueUrl($queue_url);
+$receiver->setSqsClient(ClientManager::getSqsClient());
+
+$builder = new InstanceBuilder();
+$builder->setRunner(new Runner());
+$builder->setEc2Client(ClientManager::getEc2Client());
 
 $observer = new Qo\QueueObserver();
 $observer->setReceiver($receiver);
+$observer->setInstanceBuilder($builder);
 $observer->execute();
 
