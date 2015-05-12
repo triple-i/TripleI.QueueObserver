@@ -8,6 +8,8 @@
  **/
 namespace Qo\Aws\Ec2;
 
+use Aws\Ec2\Ec2Client;
+use Qo\Command\Runner;
 use Qo\Error\Exception\QoException;
 
 class InstanceBuilder
@@ -26,6 +28,12 @@ class InstanceBuilder
 
 
     /**
+     * @var Runner
+     **/
+    private $runner;
+
+
+    /**
      * @param  object $msg
      *
      * @return void
@@ -40,23 +48,35 @@ class InstanceBuilder
      * @param  Ec2Client $ec2_client
      * @return void
      **/
-    public function setEc2Client ($ec2_client)
+    public function setEc2Client (Ec2Client $ec2_client)
     {
         $this->ec2_client = $ec2_client;
     }
 
 
     /**
+     * @param  Runnner $runner
+     * @return void
+     **/
+    public function setRunner (Runner $runner)
+    {
+        $this->runner = $runner;
+    }
+
+
+    /**
      * 指定メッセージをタグとしてEC2インスタンスを立ち上げる
      *
-     * @return void
+     * @return boolean
      **/
     public function execute ()
     {
         $this->_validateParameters();
 
         $ami_id = $this->_getTripleiCoreAmiId();
-        // $this->_buildInstance($ami_id);
+        $this->_buildInstance($ami_id);
+
+        return true;
     }
 
 
@@ -74,6 +94,10 @@ class InstanceBuilder
         if (is_null($this->ec2_client)) {
             throw new QoException('EC2クライアントクラスが指定されていません');
         }
+
+        if (is_null($this->runner)) {
+            throw new QoException('Runnerクラスが指定されていません');
+        }
     }
 
 
@@ -84,7 +108,7 @@ class InstanceBuilder
      **/
     private function _getTripleiCoreAmiId ()
     {
-        $results = $this->ec2_client->describeImages([
+        $images = $this->ec2_client->describeImages([
             'Owners' => ['self'],
             'Filters' => [
                 [
@@ -93,6 +117,15 @@ class InstanceBuilder
                 ]
             ]
         ]);
+
+        $values = [];
+        foreach ($images->get('Images') as $image) {
+            $values[$image['Name']] = $image['ImageId'];
+        }
+        krsort($values);
+        $image_id = reset($values);
+
+        if (! $image_id) throw new QoException('TripleI/Coreイメージが見つかりませんでした');
     }
 
 
@@ -103,8 +136,11 @@ class InstanceBuilder
      **/
     private function _buildInstance ()
     {
-        // todo
-        // コマンド実行する仲介クラスを作ってTerraformで起動する予定
+        // TripleI.ServerConfigs の Adapter コマンドを介してインスタンスを立ち上げる
+        $command = '/home/fedora/TripleI.ServerConfigs/bin/adapter '.
+            'aws ec2 gemini-app production';
+
+        $this->runner->execute($command);
     }
 }
 
