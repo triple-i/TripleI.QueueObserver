@@ -80,7 +80,7 @@ abstract class MockTestCase extends \PHPUnit_Framework_TestCase
     {
         $arguments = $this->_getConstructArguments();
         $methods   = array_merge($this->methods, [
-            'describeImages'
+            'createTags', 'describeImages'
         ]);
 
         return $this->getMock('Aws\Ec2\Ec2Client', $methods, $arguments);
@@ -94,6 +94,17 @@ abstract class MockTestCase extends \PHPUnit_Framework_TestCase
     {
         return $this->getMock('Qo\Aws\Ec2\InstanceBuilder', [
             'execute', 'setEc2Client', 'setRunner'
+        ]);
+    }
+
+
+    /**
+     * @return Guzzle\Service\Resource\Model
+     **/
+    public function getGuzzleModelMock ()
+    {
+        return $this->getMock('Guzzle\Service\Resource\Model', [
+            'get', 'getPath'
         ]);
     }
 
@@ -127,9 +138,20 @@ abstract class MockTestCase extends \PHPUnit_Framework_TestCase
     {
         $arguments = $this->_getConstructArguments();
         $methods   = array_merge($this->methods, [
-            'receiveMessage'
+            'deleteMessage', 'receiveMessage'
         ]);
 
         return $this->getMock('Aws\Sqs\SqsClient', $methods, $arguments);
+    }
+
+
+    /**
+     * @return Sweeper_Mock
+     **/
+    public function getSweeperMock ()
+    {
+        return $this->getMock('Qo\Aws\Sqs\Sweeper', [
+            'execute'
+        ]);
     }
 }

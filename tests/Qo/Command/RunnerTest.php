@@ -32,7 +32,7 @@ class RunnerTest extends MockTestCase
         $command = 'echo "test"';
         $result = $this->runner->execute($command);
 
-        $this->expectOutputString('test'.PHP_EOL);
+        $this->assertEquals('test', $result);
     }
 
 }

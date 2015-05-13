@@ -32,5 +32,8 @@ class QueueTest extends PHPUnit_Framework_TestCase
 
         $url = Queue::getUrl('GEMINI_QUEUE');
         $this->assertEquals($url, 'https://sqs.ap-northeast-1.amazonaws.com/637549107398/GEMINI_QUEUE');
+
+        $url = Queue::getUrl('gemini_test');
+        $this->assertEquals($url, 'https://sqs.ap-northeast-1.amazonaws.com/637549107398/GEMINI_TEST');
     }
 }

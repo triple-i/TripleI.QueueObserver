@@ -14,25 +14,15 @@ class Receiver
 {
 
     /**
-     * @var SqsClient
-     **/
-    private $sqs_client;
-
-
-    /**
      * @var string
      **/
     private $queue_url;
 
 
     /**
-     * @param  SqsCelint $sqs_client
-     * @return void
+     * @var SqsClient
      **/
-    public function setSqsClient ($sqs_client)
-    {
-        $this->sqs_client = $sqs_client;
-    }
+    private $sqs_client;
 
 
     /**
@@ -42,6 +32,16 @@ class Receiver
     public function setQueueUrl ($queue_url)
     {
         $this->queue_url = $queue_url;
+    }
+
+
+    /**
+     * @param  SqsCelint $sqs_client
+     * @return void
+     **/
+    public function setSqsClient ($sqs_client)
+    {
+        $this->sqs_client = $sqs_client;
     }
 
 
@@ -64,12 +64,12 @@ class Receiver
      **/
     private function _validateParameters ()
     {
-        if (is_null($this->sqs_client)) {
-            throw new QoException('SQSクライアントクラスが指定されていません');
-        }
-
         if (is_null($this->queue_url)) {
             throw new QoException('キューのURLが指定されていません');
+        }
+
+        if (is_null($this->sqs_client)) {
+            throw new QoException('SqsClientクラスが指定されていません');
         }
     }
 
@@ -84,12 +84,17 @@ class Receiver
         $response = $this->sqs_client->receiveMessage([
             'QueueUrl' => $this->queue_url,
             'VisibilityTimeout' => 30,
-            'WaitTimeSeconds' => 3
+            'WaitTimeSeconds' => 10
         ]);
 
         $message = $response->getPath('Messages/*');
-        if (! is_null($message)) $message = json_decode($message['Body']);
+        if (is_null($message)) return null;
 
-        return $message;
+        $message_body = json_decode($message['Body']);
+
+        // メッセージ削除時に必要な受信ハンドル
+        $message_body->receipt_handle = $message['ReceiptHandle'];
+
+        return $message_body;
     }
 }

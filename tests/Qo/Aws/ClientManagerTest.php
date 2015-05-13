@@ -115,6 +115,20 @@ class ClientManagerTest extends PHPUnit_Framework_TestCase
 
 
     /**
+     * @test
+     * @group aws-manager-get-ec2
+     * @group aws-manager
+     **/
+    public function Ec2クライアントの取得 ()
+    {
+        $this->_initEnv();
+        $client = ClientManager::getEc2Client();
+
+        $this->assertInstanceOf('Aws\Ec2\Ec2Client', $client);
+    }
+
+
+    /**
      * 環境変数をセットする
      *
      * @return void

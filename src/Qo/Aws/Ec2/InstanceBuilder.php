@@ -22,15 +22,15 @@ class InstanceBuilder
 
 
     /**
-     * @var Ec2Client
-     **/
-    private $ec2_client;
-
-
-    /**
      * @var Runner
      **/
     private $runner;
+
+
+    /**
+     * @var Ec2Client
+     **/
+    private $ec2_client;
 
 
     /**
@@ -45,22 +45,22 @@ class InstanceBuilder
 
 
     /**
-     * @param  Ec2Client $ec2_client
-     * @return void
-     **/
-    public function setEc2Client (Ec2Client $ec2_client)
-    {
-        $this->ec2_client = $ec2_client;
-    }
-
-
-    /**
      * @param  Runnner $runner
      * @return void
      **/
     public function setRunner (Runner $runner)
     {
         $this->runner = $runner;
+    }
+
+
+    /**
+     * @param  Ec2Client $ec2_client
+     * @return void
+     **/
+    public function setEc2Client (Ec2Client $ec2_client)
+    {
+        $this->ec2_client = $ec2_client;
     }
 
 
@@ -91,12 +91,12 @@ class InstanceBuilder
             throw new QoException('キューメッセージを指定してください');
         }
 
-        if (is_null($this->ec2_client)) {
-            throw new QoException('EC2クライアントクラスが指定されていません');
-        }
-
         if (is_null($this->runner)) {
             throw new QoException('Runnerクラスが指定されていません');
+        }
+
+        if (is_null($this->ec2_client)) {
+            throw new QoException('Ec2クライアントクラスが指定されていません');
         }
     }
 
@@ -136,11 +136,60 @@ class InstanceBuilder
      **/
     private function _buildInstance ()
     {
-        // TripleI.ServerConfigs の Adapter コマンドを介してインスタンスを立ち上げる
+        // TripleI.ServerConfigs の Adapter コマンドを介して GeminiApp インスタンスを立ち上げる
         $command = '/home/fedora/TripleI.ServerConfigs/bin/adapter '.
-            'aws ec2 gemini-app production';
+            'aws build gemini-app production';
 
-        $this->runner->execute($command);
+        $output = $this->runner->execute($command);
+
+        // 先頭行は Adapter 越しの実態コマンドのログだから破棄する
+        $output = preg_replace('/^[^\n]*\n/', '', $output);
+        $output = json_decode(trim($output));
+
+        // 生成したインスタンス情報
+        $instances = $output->Instances;
+
+        // タグを付与する
+        $this->_taggingInstance($instances);
+    }
+
+
+    /**
+     * @param  array $instances
+     * @return void
+     **/
+    private function _taggingInstance ($instances)
+    {
+        $resources = array_map(function ($i) {
+            return $i->InstanceId;
+        }, $instances);
+
+        $instance_name = sprintf('GeminiApp %s', $this->msg->timestamp);
+        $r = $this->ec2_client->createTags([
+            'Resources' => $resources,
+            'Tags' => [[
+                'Key'   => 'Name',
+                'Value' => $instance_name
+            ], [
+                'Key'   => 'message_id',
+                'Value' => $this->msg->message_id
+            ], [
+                'Key'   => 'action',
+                'Value' => $this->msg->action
+            ], [
+                'Key'   => 'publish_type',
+                'Value' => $this->msg->publish_type
+            ], [
+                'Key'   => 'book_name',
+                'Value' =>$this->msg->book_name
+            ], [
+                'Key'   => 'client',
+                'Value' => $this->msg->client
+            ], [
+                'Key'   => 'user',
+                'Value' => $this->msg->user
+            ]]
+        ]);
     }
 }
 

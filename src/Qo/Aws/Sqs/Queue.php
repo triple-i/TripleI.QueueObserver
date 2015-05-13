@@ -57,6 +57,8 @@ class Queue
      **/
     public static function getUrl ($q_name)
     {
+        $q_name = strtoupper($q_name);
+
         if (! in_array($q_name, self::$names)) {
             throw new QoException('存在しないキュー名称です');
         }

@@ -14,15 +14,14 @@ class InstanceBuilderTest extends MockTestCase
 
 
     /**
-     * @var Ec2Client
-     **/
-    private $ec2_client;
-
-
-    /**
      * @var Runner
      **/
     private $runner;
+
+    /**
+     * @var Ec2Client
+     **/
+    private $ec2_client;
 
 
     /**
@@ -31,8 +30,8 @@ class InstanceBuilderTest extends MockTestCase
     public function setUp ()
     {
         $this->builder    = new InstanceBuilder();
-        $this->ec2_client = $this->getEc2Mock();
         $this->runner     = $this->getRunnerMock();
+        $this->ec2_client = $this->getEc2Mock();
     }
 
 
@@ -52,11 +51,11 @@ class InstanceBuilderTest extends MockTestCase
     /**
      * @test
      * @expectedException          Qo\Error\Exception\QoException
-     * @expectedExceptionMessage   EC2クライアントクラスが指定されていません
-     * @group builder-not-set-ec2-client
+     * @expectedExceptionMessage   Runnerクラスが指定されていません
+     * @group builder-not-set-runner
      * @group builder
      **/
-    public function EC2クライアントクラスを指定していない場合 ()
+    public function Runnerクラスを指定していない場合 ()
     {
         $msg = new \stdClass;
 
@@ -68,16 +67,16 @@ class InstanceBuilderTest extends MockTestCase
     /**
      * @test
      * @expectedException          Qo\Error\Exception\QoException
-     * @expectedExceptionMessage   Runnerクラスが指定されていません
-     * @group builder-not-set-runner
+     * @expectedExceptionMessage   Ec2クライアントクラスが指定されていません
+     * @group builder-not-set-ec2-client
      * @group builder
      **/
-    public function Runnerクラスを指定していない場合 ()
+    public function Ec2クライアントクラスを指定していない場合 ()
     {
         $msg = new \stdClass;
 
         $this->builder->setMessage($msg);
-        $this->builder->setEc2Client($this->ec2_client);
+        $this->builder->setRunner($this->runner);
         $this->builder->execute();
     }
 
@@ -120,8 +119,15 @@ class InstanceBuilderTest extends MockTestCase
     public function 正常な処理 ()
     {
         $msg = new \stdClass;
+        $msg->message_id = 'fb676f597607583fb402789d0b91d3ad17f58cb6';
+        $msg->action = 'fo';
+        $msg->publish_type = 'fopdf_only';
+        $msg->book_name = 'Gemini-Sample';
+        $msg->client = 'default';
+        $msg->timestamp = '20150512171808';
+        $msg->user = 'info@iii-planning.com';
 
-        $results = [[
+        $ami_response = [[
             'Name' => 'TripleI/Core 20150101',
             'ImageId' => 'ImageId-20150101'
         ], [
@@ -129,14 +135,18 @@ class InstanceBuilderTest extends MockTestCase
             'ImageId' => 'ImageId-20150401'
         ]];
 
-        $images = $this->getMock('Guzzle\Service\Resource\Model');
+        $images = $this->getGuzzleModelMock();
         $images->expects($this->any())
             ->method('get')
-            ->will($this->returnValue($results));
+            ->will($this->returnValue($ami_response));
 
         $this->ec2_client->expects($this->any())
             ->method('describeImages')
             ->will($this->returnValue($images));
+
+        $this->runner->expects($this->any())
+            ->method('execute')
+            ->will($this->returnValue($this->_getRunInstanceResponse()));
 
         $this->builder->setMessage($msg);
         $this->builder->setEc2Client($this->ec2_client);
@@ -144,6 +154,73 @@ class InstanceBuilderTest extends MockTestCase
         $results = $this->builder->execute();
 
         $this->assertTrue($results);
+    }
+
+
+    /**
+     * @return string
+     **/
+    private function _getRunInstanceResponse ()
+    {
+        return 'execute: aws ec2 run-instances --cli-input-json '.
+            'file://gemini-app/aws/production.json --image-id ami-f0ec2bf0 '.
+            '--user-data file://gemini-app/user-data/production.sh
+{
+    "OwnerId": "637549107398",
+    "ReservationId": "r-e54fc116",
+    "Groups": [
+        {
+            "GroupName": "WebService",
+            "GroupId": "sg-b81a81b9"
+        }
+    ],
+    "Instances": [
+        {
+            "Monitoring": {
+                "State": "pending"
+            },
+            "PublicDnsName": "",
+            "KernelId": "aki-176bf516",
+            "State": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "EbsOptimized": false,
+            "LaunchTime": "2015-05-13T05:13:00.000Z",
+            "ProductCodes": [],
+            "StateTransitionReason": "",
+            "InstanceId": "i-76c4f985",
+            "ImageId": "ami-f0ec2bf0",
+            "PrivateDnsName": "",
+            "KeyName": "a_1",
+            "SecurityGroups": [
+                {
+                    "GroupName": "WebService",
+                    "GroupId": "sg-b81a81b9"
+                }
+            ],
+            "ClientToken": "",
+            "InstanceType": "t1.micro",
+            "NetworkInterfaces": [],
+            "Placement": {
+                "Tenancy": "default",
+                "GroupName": "",
+                "AvailabilityZone": "ap-northeast-1a"
+            },
+            "Hypervisor": "xen",
+            "BlockDeviceMappings": [],
+            "Architecture": "x86_64",
+            "StateReason": {
+                "Message": "pending",
+                "Code": "pending"
+            },
+            "RootDeviceName": "/dev/sda",
+            "VirtualizationType": "paravirtual",
+            "RootDeviceType": "ebs",
+            "AmiLaunchIndex": 0
+        }
+    ]
+}';
     }
 }
 

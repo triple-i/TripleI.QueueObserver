@@ -8,17 +8,17 @@ class Runner
 
     /**
      * @param  string $command
-     * @return boolean
+     * @return string
      **/
     public function execute ($command)
     {
         try {
-            passthru($command);
+            exec($command, $output);
         } catch (\Exception $e) {
             throw $e;
         }
 
-        return true;
+        return implode(PHP_EOL, $output);
     }
 }
 

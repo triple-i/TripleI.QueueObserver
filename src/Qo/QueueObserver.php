@@ -10,6 +10,7 @@ namespace Qo;
 use Qo\Aws\Ec2\InstanceBuilder;
 use Qo\Aws\Sqs\Queue;
 use Qo\Aws\Sqs\Receiver;
+use Qo\Aws\Sqs\Sweeper;
 
 use Qo\Error\Exception\QoException;
 
@@ -32,6 +33,12 @@ class QueueObserver
      * @var Instancebuilder
      **/
     private $builder;
+
+
+    /**
+     * @var Sweeper
+     **/
+    private $sweeper;
 
 
     /**
@@ -64,6 +71,16 @@ class QueueObserver
 
 
     /**
+     * @param  Sweeper $sweeper
+     * @return void
+     **/
+    public function setSweeper (Sweeper $sweeper)
+    {
+        $this->sweeper = $sweeper;
+    }
+
+
+    /**
      * @return void
      **/
     public function execute ()
@@ -89,6 +106,10 @@ class QueueObserver
         if (is_null($this->builder)) {
             throw new QoException('InstanceBuilderクラスが指定されていません');
         }
+
+        if (is_null($this->sweeper)) {
+            throw new QoException('Sweeperクラスが指定されていません');
+        }
     }
 
 
@@ -97,25 +118,39 @@ class QueueObserver
      **/
     private function _monitoring ()
     {
-        while ($this->dry_run === false) {
+        while (true) {
             $msg = $this->receiver->execute();
 
             if (! is_null($msg)) {
                 $this->_buildEc2Instance($msg);
+                $this->_deleteQueue($msg);
             }
 
+            if ($this->dry_run === true) break;
             sleep(1);
         }
     }
 
 
     /**
-     * @param  obejct $params
+     * @param  obejct $msg
      * @return void
      **/
-    private function _buildEc2Instance ($params)
+    private function _buildEc2Instance ($msg)
     {
+        $this->builder->setMessage($msg);
         $this->builder->execute();
+    }
+
+
+    /**
+     * @param  object $msg
+     * @return void
+     **/
+    private function _deleteQueue ($msg)
+    {
+        $this->sweeper->setMessage($msg);
+        $this->sweeper->execute();
     }
 
 }
