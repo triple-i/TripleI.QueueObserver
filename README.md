@@ -1,8 +1,8 @@
-TripleI.QueueObserver ![](https://travis-ci.org/triple-i/TripleI.QueueObserver.svg?branch=develop)
+TripleI.QueueObserver ![](https://travis-ci.org/triple-i/TripleI.QueueObserver.svg?branch=master)
 =======
 シンプルなキュー監視サービス
 ---------------------------------------------
-TripleI.QueueObserver は AmazonSQS を監視するシンプルな監視サービスを提供します。  
+TripleI.QueueObserver は AmazonSQS を監視するシンプルな監視サービスを提供します。
 少しの設定で監視サービスを立ち上げることが出来ます。
 
 
@@ -28,7 +28,7 @@ export AWS_DEFAULT_REGION="your_default_region"
 
 使い方
 ---------
-使い方は簡単です。  
+使い方は簡単です。
 bin/observe に監視したキュー名称を渡してあげるだけで監視が始まります。
 
 
