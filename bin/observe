@@ -1,0 +1,37 @@
+#! /usr/bin/env php
+<?php
+
+require_once __DIR__.'/../src/Bootstrap.php';
+
+use Qo\Aws\ClientManager;
+use Qo\Aws\Ec2\InstanceBuilder;
+use Qo\Aws\Sqs\Queue;
+use Qo\Aws\Sqs\Receiver;
+use Qo\Aws\Sqs\Sweeper;
+use Qo\Command\Runner;
+
+
+$queue_name = $argv[1];
+$queue_url  = Queue::getUrl($queue_name);
+
+$ec2_client = ClientManager::getEc2Client();
+$sqs_client = ClientManager::getSqsClient();
+
+$receiver = new Receiver();
+$receiver->setQueueUrl($queue_url);
+$receiver->setSqsClient($sqs_client);
+
+$builder = new InstanceBuilder();
+$builder->setRunner(new Runner());
+$builder->setEc2Client($ec2_client);
+
+$sweeper = new Sweeper();
+$sweeper->setQueueUrl($queue_url);
+$sweeper->setSqsClient($sqs_client);
+
+$observer = new Qo\QueueObserver();
+$observer->setReceiver($receiver);
+$observer->setInstanceBuilder($builder);
+$observer->setSweeper($sweeper);
+$observer->execute();
+
