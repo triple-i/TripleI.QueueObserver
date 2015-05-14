@@ -3,6 +3,7 @@
 
 require_once __DIR__.'/../src/Bootstrap.php';
 
+use Qo\QueueObserver;
 use Qo\Aws\ClientManager;
 use Qo\Aws\Ec2\InstanceBuilder;
 use Qo\Aws\Sqs\Queue;
@@ -29,7 +30,7 @@ $sweeper = new Sweeper();
 $sweeper->setQueueUrl($queue_url);
 $sweeper->setSqsClient($sqs_client);
 
-$observer = new Qo\QueueObserver();
+$observer = new QueueObserver();
 $observer->setReceiver($receiver);
 $observer->setInstanceBuilder($builder);
 $observer->setSweeper($sweeper);

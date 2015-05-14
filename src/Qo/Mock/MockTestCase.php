@@ -80,7 +80,7 @@ abstract class MockTestCase extends \PHPUnit_Framework_TestCase
     {
         $arguments = $this->_getConstructArguments();
         $methods   = array_merge($this->methods, [
-            'createTags', 'describeImages'
+            'createTags'
         ]);
 
         return $this->getMock('Aws\Ec2\Ec2Client', $methods, $arguments);

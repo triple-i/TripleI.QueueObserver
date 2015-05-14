@@ -84,35 +84,6 @@ class InstanceBuilderTest extends MockTestCase
     /**
      * @test
      * @large
-     * @expectedException          Qo\Error\Exception\QoException
-     * @expectedExceptionMessage   TripleI/Coreイメージが見つかりませんでした
-     * @group builder-not-found-ami
-     * @group builder
-     **/
-    public function TripleiCoreのAMIが見つからなかった場合 ()
-    {
-        $msg = new \stdClass;
-        $results = [];
-
-        $images = $this->getMock('Guzzle\Service\Resource\Model');
-        $images->expects($this->any())
-            ->method('get')
-            ->will($this->returnValue($results));
-
-        $this->ec2_client->expects($this->any())
-            ->method('describeImages')
-            ->will($this->returnValue($images));
-
-        $this->builder->setMessage($msg);
-        $this->builder->setEc2Client($this->ec2_client);
-        $this->builder->setRunner($this->runner);
-        $this->builder->execute();
-    }
-
-
-    /**
-     * @test
-     * @large
      * @group builder-execute
      * @group builder
      **/
@@ -126,23 +97,6 @@ class InstanceBuilderTest extends MockTestCase
         $msg->client = 'default';
         $msg->timestamp = '20150512171808';
         $msg->user = 'info@iii-planning.com';
-
-        $ami_response = [[
-            'Name' => 'TripleI/Core 20150101',
-            'ImageId' => 'ImageId-20150101'
-        ], [
-            'Name' => 'TripleI/Core 20150401',
-            'ImageId' => 'ImageId-20150401'
-        ]];
-
-        $images = $this->getGuzzleModelMock();
-        $images->expects($this->any())
-            ->method('get')
-            ->will($this->returnValue($ami_response));
-
-        $this->ec2_client->expects($this->any())
-            ->method('describeImages')
-            ->will($this->returnValue($images));
 
         $this->runner->expects($this->any())
             ->method('execute')
