@@ -72,9 +72,7 @@ class InstanceBuilder
     public function execute ()
     {
         $this->_validateParameters();
-
-        $ami_id = $this->_getTripleiCoreAmiId();
-        $this->_buildInstance($ami_id);
+        $this->_buildInstance();
 
         return true;
     }
@@ -98,34 +96,6 @@ class InstanceBuilder
         if (is_null($this->ec2_client)) {
             throw new QoException('Ec2クライアントクラスが指定されていません');
         }
-    }
-
-
-    /**
-     * TripleiCoreのAMIイメージIDを取得する
-     *
-     * @return string
-     **/
-    private function _getTripleiCoreAmiId ()
-    {
-        $images = $this->ec2_client->describeImages([
-            'Owners' => ['self'],
-            'Filters' => [
-                [
-                    'Name' => 'tag:Name',
-                    'Values' => ['TripleI/Core']
-                ]
-            ]
-        ]);
-
-        $values = [];
-        foreach ($images->get('Images') as $image) {
-            $values[$image['Name']] = $image['ImageId'];
-        }
-        krsort($values);
-        $image_id = reset($values);
-
-        if (! $image_id) throw new QoException('TripleI/Coreイメージが見つかりませんでした');
     }
 
 
@@ -164,7 +134,7 @@ class InstanceBuilder
             return $i->InstanceId;
         }, $instances);
 
-        $instance_name = sprintf('GeminiApp %s', $this->msg->timestamp);
+        $instance_name = sprintf('GeminiApp-%s', $this->msg->timestamp);
         $r = $this->ec2_client->createTags([
             'Resources' => $resources,
             'Tags' => [[
