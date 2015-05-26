@@ -134,7 +134,7 @@ class InstanceBuilder
             return $i->InstanceId;
         }, $instances);
 
-        $instance_name = sprintf('GeminiApp %s', $this->msg->timestamp);
+        $instance_name = sprintf('GeminiApp-%s', $this->msg->timestamp);
         $r = $this->ec2_client->createTags([
             'Resources' => $resources,
             'Tags' => [[
