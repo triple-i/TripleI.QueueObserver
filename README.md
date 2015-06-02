@@ -3,7 +3,7 @@ TripleI.QueueObserver ![](https://travis-ci.org/triple-i/TripleI.QueueObserver.s
 シンプルなキュー監視サービス
 ---------------------------------------------
 TripleI.QueueObserver は AmazonSQS を監視するシンプルな監視サービスを提供します。  
-少しの設定で監視サービスを立ち上げることが出来ます。
+簡単な設定で監視サービスを立ち上げることが出来ます。
 
 
 推奨環境
@@ -35,3 +35,18 @@ bin/observe に監視したキュー名称を渡してあげるだけで監視�
 ```
 $ bin/observe YOUR_SQS_NAME
 ```
+
+### Debug Mode
+キュー名称に GEMINI_PUBLISH_TEST を指定した場合はデバッグモードで起動します。  
+デバッグモードでは EC2 インスタンスの立ち上げも行わず使用したキューの破棄も行いません。  
+手元でデバッグするときに使用します。
+
+
+## License
+
+[MIT](https://github.com/triple-i/TripleI.QueueObserver/blob/master/LICENSE)
+
+## Author
+
+[triple-i](https://github.com/triple-i)
+
