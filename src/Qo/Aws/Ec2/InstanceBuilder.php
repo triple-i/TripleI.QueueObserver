@@ -109,7 +109,6 @@ class InstanceBuilder
         // TripleI.ServerConfigs の Adapter コマンドを介して GeminiApp インスタンスを立ち上げる
         $command = '/home/fedora/TripleI.ServerConfigs/bin/adapter '.
             'aws build gemini-app production';
-
         $output = $this->runner->execute($command);
 
         // 先頭行は Adapter 越しの実態コマンドのログだから破棄する
@@ -135,7 +134,7 @@ class InstanceBuilder
         }, $instances);
 
         $instance_name = sprintf('GeminiApp-%s', $this->msg->timestamp);
-        $r = $this->ec2_client->createTags([
+        $this->ec2_client->createTags([
             'Resources' => $resources,
             'Tags' => [[
                 'Key'   => 'Name',
@@ -155,9 +154,6 @@ class InstanceBuilder
             ], [
                 'Key'   => 'client',
                 'Value' => $this->msg->client
-            ], [
-                'Key'   => 'user',
-                'Value' => $this->msg->user
             ]]
         ]);
     }

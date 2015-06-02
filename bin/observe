@@ -34,5 +34,11 @@ $observer = new QueueObserver();
 $observer->setReceiver($receiver);
 $observer->setInstanceBuilder($builder);
 $observer->setSweeper($sweeper);
+
+// デバッグモード
+if (strtoupper($queue_name) == 'GEMINI_PUBLISH_TEST') {
+    $observer->enableDebug();
+}
+
 $observer->execute();
 

@@ -30,10 +30,19 @@ class QueueTest extends PHPUnit_Framework_TestCase
         $url = Queue::getUrl('GEMINI_PUBLISH_VER2');
         $this->assertEquals($url, 'https://sqs.ap-northeast-1.amazonaws.com/637549107398/GEMINI_PUBLISH_VER2');
 
-        $url = Queue::getUrl('GEMINI_QUEUE');
+        $url = Queue::getUrl('gemini_queue');
         $this->assertEquals($url, 'https://sqs.ap-northeast-1.amazonaws.com/637549107398/GEMINI_QUEUE');
+    }
 
-        $url = Queue::getUrl('gemini_test');
-        $this->assertEquals($url, 'https://sqs.ap-northeast-1.amazonaws.com/637549107398/GEMINI_TEST');
+
+    /**
+     * @test
+     * @group queue-get-test-url
+     * @group queue
+     **/
+    public function デバッグ用キューのURLを取得する ()
+    {
+        $url = Queue::getUrl('GEMINI_PUBLISH_TEST');
+        $this->assertEquals($url, 'https://sqs.ap-northeast-1.amazonaws.com/637549107398/GEMINI_PUBLISH_TEST');
     }
 }

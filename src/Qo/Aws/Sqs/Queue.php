@@ -21,7 +21,7 @@ class Queue
     public static $names = [
         'GEMINI_QUEUE',
         'GEMINI_PUBLISH_VER2',
-        'GEMINI_TEST'
+        'GEMINI_PUBLISH_TEST'
     ];
 
 
