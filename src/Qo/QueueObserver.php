@@ -18,12 +18,6 @@ class QueueObserver
 {
 
     /**
-     * @var boolean
-     **/
-    private $dry_run = false;
-
-
-    /**
      * @var Receiver
      **/
     private $receiver;
@@ -42,11 +36,26 @@ class QueueObserver
 
 
     /**
+     * @var boolean
+     **/
+    private $debug = false;
+
+
+    /**
      * @return void
      **/
-    public function enableDryRun ()
+    public function enableDebug ()
     {
-        $this->dry_run = true;
+        $this->debug = true;
+    }
+
+
+    /**
+     * @return void
+     **/
+    public function disableDebug ()
+    {
+        $this->debug = false;
     }
 
 
@@ -86,7 +95,12 @@ class QueueObserver
     public function execute ()
     {
         $this->_validateParameters();
-        $this->_monitoring();
+
+        if (TEST === true || $this->debug === true) {
+            $this->_monitoringWithDebugMode();
+        } else {
+            $this->_monitoring();
+        }
 
         return true;
     }
@@ -119,16 +133,39 @@ class QueueObserver
     private function _monitoring ()
     {
         while (true) {
-            $msg = $this->receiver->execute();
-
-            if (! is_null($msg)) {
-                $this->_buildEc2Instance($msg);
-                $this->_deleteQueue($msg);
-            }
-
-            if ($this->dry_run === true) break;
+            $msg = $this->_receiveMessage();
             sleep(1);
         }
+    }
+
+
+    /**
+     * @return void
+     **/
+    private function _monitoringWithDebugMode ()
+    {
+        $msg = null;
+
+        while (is_null($msg)) {
+            $msg = $this->_receiveMessage();
+            sleep(1);
+        }
+    }
+
+
+    /**
+     * @return object or null
+     **/
+    private function _receiveMessage ()
+    {
+        $msg = $this->receiver->execute();
+
+        if (! is_null($msg)) {
+            $this->_buildEc2Instance($msg);
+            $this->_deleteQueue($msg);
+        }
+
+        return $msg;
     }
 
 
@@ -138,6 +175,7 @@ class QueueObserver
      **/
     private function _buildEc2Instance ($msg)
     {
+        if ($this->debug) return false;
         $this->builder->setMessage($msg);
         $this->builder->execute();
     }
@@ -149,6 +187,7 @@ class QueueObserver
      **/
     private function _deleteQueue ($msg)
     {
+        if ($this->debug) return false;
         $this->sweeper->setMessage($msg);
         $this->sweeper->execute();
     }

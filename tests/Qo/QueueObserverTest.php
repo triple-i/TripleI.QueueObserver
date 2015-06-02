@@ -88,6 +88,37 @@ class QueueObserverTest extends MockTestCase
     /**
      * @test
      * @large
+     * @group qo-debug-execute
+     * @group qo
+     **/
+    public function デバックモードでの処理 ()
+    {
+        $msg = new \stdClass;
+        $msg->message_id = 'fb676f597607583fb402789d0b91d3ad17f58cb6';
+        $msg->action = 'fo';
+        $msg->publish_type = 'fopdf_only';
+        $msg->book_name = 'Gemini-Sample';
+        $msg->client = 'default';
+        $msg->timestamp = '20150512171808';
+        $msg->user = 'info@iii-planning.com';
+
+        $this->receiver->expects($this->any())
+            ->method('execute')
+            ->will($this->returnValue($msg));
+
+        $this->qo->setReceiver($this->receiver);
+        $this->qo->setInstanceBuilder($this->builder);
+        $this->qo->setSweeper($this->sweeper);
+        $this->qo->enableDebug();
+        $result = $this->qo->execute();
+
+        $this->assertTrue($result);
+    }
+
+
+    /**
+     * @test
+     * @large
      * @group qo-execute
      * @group qo
      **/
@@ -109,7 +140,7 @@ class QueueObserverTest extends MockTestCase
         $this->qo->setReceiver($this->receiver);
         $this->qo->setInstanceBuilder($this->builder);
         $this->qo->setSweeper($this->sweeper);
-        $this->qo->enableDryRun();
+        $this->qo->disableDebug();
         $result = $this->qo->execute();
 
         $this->assertTrue($result);

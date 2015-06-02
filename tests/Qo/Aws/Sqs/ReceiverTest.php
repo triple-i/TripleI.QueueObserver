@@ -96,9 +96,7 @@ class RecieverTest extends MockTestCase
             "action": "fo",
             "publish_type": "fopdf_only",
             "book_name": "Gemini-Sample",
-            "client": "default",
-            "timestamp": "20150512171809",
-            "user": "info@iii-planning.com"
+            "client": "default"
         }';
 
         // 受信ハンドル
